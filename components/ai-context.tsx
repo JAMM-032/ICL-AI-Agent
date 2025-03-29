@@ -40,6 +40,7 @@ export async function onSubmit(message: string) {
       },
     ],
   });
+  console.log("AI response", );
   return {
     id: nanoid(),
     display: <MarkdownText done={true}>{msg.response}</MarkdownText>,
