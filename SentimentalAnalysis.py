@@ -13,7 +13,7 @@ dotenv.load_dotenv()
 latitude = 51.5304
 longitude = -0.1232
 placeId_list = []
-url = f'https://maps.googleapis.com/maps/api/place/nearbysearch/json?location={latitude},{longitude}&radius=1500&type=restaurant&keyword=cruise&key={os.getenv("GOOGLE_MAPS_API_KEY")}'
+url = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=51.53160339999999,-0.1235978&radius=1500&type=DIY&keyword=repairer&key=AIzaSyBlo_CbZwwhVEtT8V5x0zW6JCmItgUWGAA'
 response = requests.get(url)
 data = json.loads(response.text)
 for place in data['results']:
@@ -22,11 +22,23 @@ for place in data['results']:
 print(placeId_list)
 
 # get reviews from google maps
+# storing the location id and the reviews as a key-pair
+# in a dictionary
+location_to_review = {}
+
 for placeId in placeId_list:
+    reviews = []
     url = f'https://maps.googleapis.com/maps/api/place/details/json?place_id={placeId}&key={os.getenv("GOOGLE_MAPS_API_KEY")}'
     response = requests.get(url)
     data = json.loads(response.text)
-    print(data['result']['reviews'])
+    if('reviews' in data['result']):
+        for review in data['result']['reviews']:
+            reviews.append(review['text'])
+        location_to_review[placeId] = reviews
+    else:
+        location_to_review[placeId] = []
+print(location_to_review)
+        
 
 # Load the spaCy model
 nlp = spacy.load("en_core_web_sm")

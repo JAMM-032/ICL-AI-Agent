@@ -76,7 +76,7 @@ agent1.include(chat_proto, publish_manifest=True)
 # get locations from google maps via latitude and longitude
 def get_location(latitude, longitude):
     placeId_list = []
-    url = f'https://maps.googleapis.com/maps/api/place/nearbysearch/json?location={longitude},{latitude}&radius=1500&type=restaurant&keyword=cruise&key={os.getenv("GOOGLE_MAPS_API_KEY")}'
+    url = f'https://maps.googleapis.com/maps/api/place/nearbysearch/json?location={str(latitude)},{str(longitude)}&radius=1500&type=restaurant&keyword=cruise&key={os.getenv("GOOGLE_MAPS_API_KEY")}'
     response = requests.get(url)
     data = json.loads(response.text)
     for place in data['results']:
