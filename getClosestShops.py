@@ -31,7 +31,7 @@ from uagents_core.contrib.protocols.chat import (
 #     carparks: List[CarPark]
 
 
-agent1 = Agent(name="agent2",seed="xoxoxo",port=8001, mailbox=True)
+agent1 = Agent(name="agent2",seed="xoxoxosalkxjsk",port=8001, mailbox=True)
 
 agent2_address = "agent1qvcqsyxsq7fpy9z2r0quvng5xnhhwn3vy7tmn5v0zwr4nlm7hcqrckcny9e"
 

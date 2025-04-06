@@ -10,9 +10,15 @@ from uagents_core.contrib.protocols.chat import (
     TextContent,
     chat_protocol_spec,
 )
+import requests
+import json
+import os
+import dotenv
+# Load environment variables from .env file
+dotenv.load_dotenv()
 
 # Intialise agent1
-agent1 = Agent(name="agent1",seed="xoxo",port=8000, mailbox=True)
+agent1 = Agent(name="agent12",seed="xoxoxoxox",port=8000, mailbox=True)
 
 # Store agent2's address (you'll need to replace this with actual address)
 agent2_address = "agent1qvnpu46exfw4jazkhwxdqpq48kcdg0u0ak3mz36yg93ej06xntklsxcwplc"
@@ -43,14 +49,18 @@ async def handle_message(ctx: Context, sender: str, msg: ChatMessage):
         if isinstance(item, TextContent):
             # Log received message
             ctx.logger.info(f"Received message from {sender}: {item.text}")
-            
             # Send acknowledgment
             ack = ChatAcknowledgement(
                 timestamp=datetime.utcnow(),
                 acknowledged_msg_id=msg.msg_id
             )
             await ctx.send(sender, ack)
-            
+            coordinates = item.text.split("\n")
+            print(coordinates)
+            latitude = coordinates[0].split(":")[1].strip()
+            longitude = coordinates[1].split(":")[1].strip()
+            ctx.logger.info(f"Extracted coordinates: Latitude: {latitude}, Longitude: {longitude}")
+            get_location(latitude, longitude)
 
 # Acknowledgement Handler - Process received acknowledgements
 @chat_proto.on_message(ChatAcknowledgement)
@@ -63,5 +73,16 @@ async def handle_acknowledgement(ctx: Context, sender: str, msg: ChatAcknowledge
 # This allows the agent to send/receive messages and handle acknowledgements using the chat protocol
 agent1.include(chat_proto, publish_manifest=True)
 
+# get locations from google maps via latitude and longitude
+def get_location(latitude, longitude):
+    placeId_list = []
+    url = f'https://maps.googleapis.com/maps/api/place/nearbysearch/json?location={longitude},{latitude}&radius=1500&type=restaurant&keyword=cruise&key={os.getenv("GOOGLE_MAPS_API_KEY")}'
+    response = requests.get(url)
+    data = json.loads(response.text)
+    for place in data['results']:
+        placeId = place['place_id']
+        placeId_list.append(placeId)
+    print(placeId_list)
+    
 if __name__ == '__main__':
     agent1.run()
