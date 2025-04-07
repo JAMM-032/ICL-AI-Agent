@@ -43,30 +43,26 @@ print(location_to_review)
 # Load the spaCy model
 nlp = spacy.load("en_core_web_sm")
 
-# Sample text
-text = "The battery life is excellent, but the screen resolution is poor."
-
-# Process the text with spaCy
-doc = nlp(text)
-
-# Extract noun phrases as aspect candidates
-aspects = [chunk.text for chunk in doc.noun_chunks]
-
-print(aspects)
-
-# Load a pre-trained ABSA model and tokenizer
 model_name = "yangheng/deberta-v3-base-absa-v1.1"
-tokenizer = AutoTokenizer.from_pretrained(model_name)
+tokenizer = AutoTokenizer.from_pretrained(model_name, use_fast=False)
 model = AutoModelForSequenceClassification.from_pretrained(model_name)
+keys = list(location_to_review.keys())
+for key in keys:
+    texts = location_to_review[keys[0]]
+    # Analyze sentiment for each aspect
+    for text in texts:
+        print(text)
+        # Process the text with spaCy
+        doc = nlp(text)
 
-# Sample text and aspects
-text = "The battery life is excellent, but the screen resolution is poor."
+        # Extract noun phrases as aspect candidates
+        aspects = [chunk.text for chunk in doc.noun_chunks]
 
-# Analyze sentiment for each aspect
-for aspect in aspects:
-    inputs = tokenizer(text, aspect, return_tensors="pt")
-    outputs = model(**inputs)
-    scores = F.softmax(outputs.logits, dim=1)
-    sentiment = torch.argmax(scores).item()
-    sentiment_label = model.config.id2label[sentiment]
-    print(f"Aspect: {aspect}, Sentiment: {sentiment_label}")
+        print(aspects)
+        for aspect in aspects:
+            inputs = tokenizer(text, aspect, return_tensors="pt")
+            outputs = model(**inputs)
+            scores = F.softmax(outputs.logits, dim=1)
+            sentiment = torch.argmax(scores).item()
+            sentiment_label = model.config.id2label[sentiment]
+            print(f"Aspect: {aspect}, Sentiment: {sentiment_label}")

@@ -1,89 +1,60 @@
-from datetime import datetime
-from uuid import uuid4
-from uagents import Agent, Protocol, Context, Model
-from time import sleep
+from typing import Any, Dict, List, Optional
 
-from uagents import Agent, Context, Model
+from uagents import Model, Protocol
 
-#import the necessary components from the chat protocol
-from uagents_core.contrib.protocols.chat import (
-    ChatAcknowledgement,
-    ChatMessage,
-    TextContent,
-    chat_protocol_spec,
+
+class Coordinates(Model):
+    latitude: float
+    longitude: float
+
+
+class POIAreaRequest(Model):
+    loc_search: Coordinates
+    radius_in_m: int
+    limit: int = 20
+    query_string: str
+    filter: Dict[str, Any] = {}
+
+
+class POI(Model):
+    placekey: str
+    location_name: str
+    brands: Optional[List[str]] = None
+    top_category: Optional[str] = None
+    sub_category: Optional[str] = None
+    location: Coordinates
+    address: str
+    city: str
+    region: Optional[str] = None
+    postal_code: str
+    iso_country_code: str
+    metadata: Optional[Dict[str, Any]] = None
+
+class POIResponse(Model):
+    data: List[str]
+
+from uagents import Agent, Context
+
+agent = Agent(name="agent2",seed="xoxoxo",port=8001, mailbox=True)
+
+GMAPS_AGENT_ADDRESS = "agent1qwjxllsh6k6f9q4t7qllw85ad82qunzac9yncu33ynr9tmll5d9cgs6e7xq"
+
+example_request = POIAreaRequest(
+    loc_search=Coordinates(latitude=51.53160339999999, longitude=-0.1235978),
+    radius_in_m=1500,
+    query_string="coffee shop",
 )
 
-# class GeoParkingRequest(Model):
-#     latitude: float
-#     longitude: float
-#     radius_in_meters: int
-#     max_results: int
+@agent.on_event("startup")
+async def handle_startup(ctx: Context):
+    await ctx.send(GMAPS_AGENT_ADDRESS, example_request)
+    ctx.logger.info(f"Sent request to  agent: {example_request}")
 
 
-# class CarPark(Model):
-#     name: Optional[str]
-#     address: Optional[str]
-#     latitude: float
-#     longitude: float
-
-
-# class GeoParkingResponse(Model):
-#     carparks: List[CarPark]
-
-
-agent1 = Agent(name="agent2",seed="xoxoxosalkxjsk",port=8001, mailbox=True)
-
-agent2_address = "agent1qvcqsyxsq7fpy9z2r0quvng5xnhhwn3vy7tmn5v0zwr4nlm7hcqrckcny9e"
-
-latitude = 35.7174747
-longitude = 139.7941792
-radius = 100
-max_results = 5
-
-# Initialize the chat protocol
-chat_proto = Protocol(spec=chat_protocol_spec)
-
-@agent1.on_event("startup")
-async def startup_handler(ctx: Context):
-    
-    # Print agent details
-    ctx.logger.info(f"My name is {ctx.agent.name} and my address is {ctx.agent.address}")
-    
-    # Send initial message to agent2
-    initial_message = ChatMessage(
-        timestamp=datetime.utcnow(),
-        msg_id=uuid4(),
-        content=[TextContent(type="text", text="I want to get list of location satisfy the criteria loc_search = Coordinates(latitude=48.140505822096365, longitude=11.559987118245475), radius_in_m = 500, limit = 10, query_string = coffee shop,")],
-    )
-    
-    await ctx.send(agent2_address, initial_message)
-
-# Message Handler - Process received messages and send acknowledgements
-@chat_proto.on_message(ChatMessage)
-async def handle_message(ctx: Context, sender: str, msg: ChatMessage):
-    for item in msg.content:
-        if isinstance(item, TextContent):
-            # Log received message
-            ctx.logger.info(f"Received message from {sender}: {item.text}")
-            
-            # Send acknowledgment
-            ack = ChatAcknowledgement(
-                timestamp=datetime.utcnow(),
-                acknowledged_msg_id=msg.msg_id
-            )
-            await ctx.send(sender, ack)
-            
-# Acknowledgement Handler - Process received acknowledgements
-@chat_proto.on_message(ChatAcknowledgement)
-async def handle_acknowledgement(ctx: Context, sender: str, msg: ChatAcknowledgement):
-    ctx.logger.info(f"Received acknowledgement from {sender} for message: {msg.acknowledged_msg_id}")
-
-
-# Include the protocol in the agent to enable the chat functionality
-# This allows the agent to send/receive messages and handle acknowledgements using the chat protocol
-agent1.include(chat_proto, publish_manifest=True)
+@agent.on_message(POIResponse)
+async def handle_response(ctx: Context, sender: str, msg: POIResponse):
+    ctx.logger.info(f"Received {len(msg.data)} pois from: {sender}")
 
 
 if __name__ == "__main__":
-    agent1.run()
-
+    agent.run()
