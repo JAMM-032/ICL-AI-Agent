@@ -87,7 +87,7 @@ export function ChatUI() {
                     setMessages([]);
                   }}
                 >
-                  <IconSymbol name="square.and.pencil" color={AC.label} />
+                  
                 </HeaderButton>
               )}
             </>

@@ -14,6 +14,7 @@ export function ChatContainer({
         {
           flex: 1,
           alignItems: "stretch",
+          marginTop: 20,
         },
         // @ts-expect-error
         process.env.EXPO_OS === "web" && { maxHeight: "100vh" },

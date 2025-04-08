@@ -4,8 +4,8 @@ import React, { useEffect } from "react";
 import {
   Image,
   Keyboard,
-  useColorScheme,
-  useWindowDimensions,
+  Platform,
+  useWindowDimensions
 } from "react-native";
 
 import Animated from "react-native-reanimated";
@@ -15,6 +15,7 @@ import {
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
+import { useTheme } from "./ui/ThemeProvider";
 
 function useKeyboardOpen() {
   const [keyboardOpen, setKeyboardOpen] = React.useState(false);
@@ -50,8 +51,8 @@ export function AnimatedLogo() {
     };
   });
 
-  const theme = useColorScheme();
-
+  const { theme } = useTheme();
+  if (Platform.OS === "web") {
   return (
     <Animated.View
       style={[
@@ -71,11 +72,40 @@ export function AnimatedLogo() {
       <Image
         source={
           theme === "light"
-            ? require("@/assets/images/logo.light.png")
-            : require("@/assets/images/logo.dark.png")
+            ? require("@/assets/images/logo_light.png")
+            : require("@/assets/images/logo_dark.png")
         }
-        style={{ width: 128, height: 128, opacity: 0.3 }}
+        style={{ width: 400, height: 50, opacity: 0.3 }}
       />
     </Animated.View>
   );
+  }
+  else {
+    return (
+      <Animated.View
+      style={[
+        {
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          justifyContent: "center",
+          alignItems: "center",
+          flex: 1,
+        },
+        animatedStyle,
+      ]}
+    >
+      <Image
+        source={
+          theme === "light"
+            ? require("@/assets/images/logo_light.png")
+            : require("@/assets/images/logo_dark.png")
+        }
+        style={{ width: 400, height: 50, opacity: 0.3 }}
+      />
+    </Animated.View>
+    );
+  }
 }

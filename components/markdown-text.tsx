@@ -4,6 +4,7 @@ import * as AC from "@bacons/apple-colors";
 import * as Haptics from "expo-haptics";
 import { useEffect } from "react";
 import Markdown from "react-native-markdown-display";
+import { useTheme } from "./ui/ThemeProvider";
 
 export default function MarkdownText({
   done,
@@ -18,13 +19,14 @@ export default function MarkdownText({
       }
     }
   }, [done]);
+  const { theme } = useTheme();
   return (
     <>
       <Markdown
         debugPrintTree={false}
         style={{
           body: {
-            color: AC.label,
+            color: theme === 'dark' ? 'white' : 'black',
             paddingHorizontal: 16,
           },
           paragraph: {
@@ -32,6 +34,7 @@ export default function MarkdownText({
           },
           em: {
             fontStyle: "italic",
+            
           },
           code_inline: {
             backgroundColor: AC.systemGray5,

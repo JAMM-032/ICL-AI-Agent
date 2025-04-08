@@ -11,8 +11,7 @@ import {
   NativeSyntheticEvent,
   TextInput,
   TextInputSubmitEditingEventData,
-  useColorScheme,
-  View,
+  View
 } from "react-native";
 import Animated, {
   useAnimatedKeyboard,
@@ -22,6 +21,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import type { AI } from "./ai-context";
 import { FirstSuggestions } from "./first-suggestions";
 import { IconSymbol } from "./ui/IconSymbol";
+import { useTheme } from "./ui/ThemeProvider";
 import TouchableBounce from "./ui/TouchableBounce";
 import { UserMessage } from "./user-message";
 
@@ -106,7 +106,7 @@ export function ChatToolbarInner({
     [onSubmitMessage]
   );
 
-  const theme = useColorScheme();
+  const { theme } = useTheme();
 
   return (
     <Animated.View
@@ -182,7 +182,6 @@ export function ChatToolbarInner({
             placeholderTextColor={AC.systemGray2}
             onSubmitEditing={onSubmitEditing}
           />
-
           <SendButton
             enabled={!!inputValue.length}
             onPress={() => onSubmitMessage(inputValue)}
@@ -200,6 +199,7 @@ function SendButton({
   enabled?: boolean;
   onPress: () => void;
 }) {
+  const { theme } = useTheme();
   return (
     <TouchableBounce
       disabled={!enabled}
@@ -224,14 +224,14 @@ function SendButton({
             borderColor: AC.separator,
             borderWidth: 1,
             aspectRatio: 1,
-            backgroundColor: AC.label,
+            backgroundColor: theme === 'dark' ? 'white' : 'black',
             borderRadius: 999,
           },
           !enabled && { opacity: 0.5 },
           tw`transition-transform hover:scale-95`,
         ]}
       >
-        <IconSymbol name="arrow.up" size={20} color={AC.systemBackground} />
+        <IconSymbol name="arrow.up" size={20} color={theme === 'dark' ? 'black' : 'white'} />
       </View>
     </TouchableBounce>
   );
