@@ -1,0 +1,6 @@
+module Pods_ExpoAI {
+  umbrella header "Pods-ExpoAI-umbrella.h"
+
+  export *
+  module * { export * }
+}

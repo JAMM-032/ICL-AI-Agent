@@ -1,0 +1,6 @@
+module ExpoQuickActions {
+  umbrella header "ExpoQuickActions-umbrella.h"
+
+  export *
+  module * { export * }
+}
