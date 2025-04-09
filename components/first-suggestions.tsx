@@ -19,9 +19,9 @@ export function FirstSuggestions() {
       {(
         [
           // ['server rendering apps', 'for native platforms'],
-          "What's the weather",
-          process.env.EXPO_OS !== "web" && "Things to do around me",
-          "Trending movies this week",
+          "How to build a chair",
+          process.env.EXPO_OS !== "web" && "How to build a table",
+          "https://www.youtube.com/watch?v=5oSee6Aatqs what do I need?",
         ].filter(Boolean) as string[]
       ).map((title, index) => (
         <Animated.View
