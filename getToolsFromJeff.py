@@ -26,7 +26,7 @@ class RAGResponse(Model):
     Attributes:
         response (str): The AI-generated answer based on scraped content.
     """
-    response: List[str] = Field(description="The AI-generated answer based on scraped content.")
+    response: str = Field(description="The AI-generated answer based on scraped content.")
 
 agent = Agent(name="agent32",seed="xoxoxo",port=8003, mailbox=True)
 
@@ -41,7 +41,7 @@ example_request = RAGRequest(
 async def handle_startup(ctx: Context):
     await ctx.send(YOUTUBE_RAG_AGENT_ADDRESS, example_request)
     ctx.logger.info(f"Sent request to  agent: {example_request}")
-
+    
 # Store the latest response in a file when received
 @agent.on_message(RAGResponse)
 async def handle_response(ctx: Context, sender: str, msg: RAGResponse):

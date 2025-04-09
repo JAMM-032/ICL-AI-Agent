@@ -21,7 +21,7 @@ dotenv.load_dotenv()
 agent1 = Agent(name="agent12",seed="xoxoxoxox",port=8000, mailbox=True)
 
 # Store agent2's address (you'll need to replace this with actual address)
-agent2_address = "agent1qvnpu46exfw4jazkhwxdqpq48kcdg0u0ak3mz36yg93ej06xntklsxcwplc"
+GEO_COORDINATE_AGENT_ADDRESS = "agent1qvnpu46exfw4jazkhwxdqpq48kcdg0u0ak3mz36yg93ej06xntklsxcwplc"
 
 # Initialize the chat protocol
 chat_proto = Protocol(spec=chat_protocol_spec)
@@ -40,7 +40,7 @@ async def startup_handler(ctx: Context):
         content=[TextContent(type="text", text="I want to get the coordinates of Kings Cross Station London")]
     )
     
-    await ctx.send(agent2_address, initial_message)
+    await ctx.send(GEO_COORDINATE_AGENT_ADDRESS, initial_message)
 
 # Message Handler - Process received messages and send acknowledgements
 @chat_proto.on_message(ChatMessage)
@@ -66,8 +66,6 @@ async def handle_message(ctx: Context, sender: str, msg: ChatMessage):
 @chat_proto.on_message(ChatAcknowledgement)
 async def handle_acknowledgement(ctx: Context, sender: str, msg: ChatAcknowledgement):
     ctx.logger.info(f"Received acknowledgement from {sender} for message: {msg.acknowledged_msg_id}")
-
-
 
 # Include the protocol in the agent to enable the chat functionality
 # This allows the agent to send/receive messages and handle acknowledgements using the chat protocol
