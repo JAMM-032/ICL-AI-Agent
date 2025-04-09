@@ -1,9 +1,8 @@
 import type { CoreMessage } from "ai/rsc";
 import { createAI, getMutableAIState } from "ai/rsc";
 import "server-only";
-import MarkdownText from "./markdown-text";
-import AmazonLink from "./AmazonLink";
-import { AmazonProduct } from "./AmazonProduct";
+import { AmazonProductList } from "./AmazonProductList";
+
 export async function onSubmit(message: string) {
   "use server";
 
@@ -22,15 +21,14 @@ export async function onSubmit(message: string) {
   });
   console.log("message", message);
 
-  // const response = await fetch("http://127.0.0.1:8000/submit", {
-  //   method: "POST",
-  //   headers: { "Content-Type": "application/json" },
-  //   body: JSON.stringify({ content: message }), // Use actual variable 'message'
-  // });
-  // const msg = await response.json();
-  // console.log(msg);
+  const response = await fetch(`http://127.0.0.1:8000/api/youtube-rag?url=${message}`, {
+    method: "GET"
+  });
+  console.log("response", response);
+  const msg = await response.json();
+  console.log(msg);
   // Manually defined result without using OpenAI
-  const content = "This is a manually defined response."
+  const content = "Here are some recommended products for your project:";
 
   aiState.done({
     ...aiState.get(),
@@ -44,11 +42,17 @@ export async function onSubmit(message: string) {
     ],
   });
   console.log("AI response", );
+  
+  // Return multiple products
   return {
     id: nanoid(),
-    display: <AmazonProduct url="https://www.amazon.com/gp/product/B0058KFUHA/ref=as_li_tl?ie=UTF8&camp=1789&creative=9325&creativeASIN=B0058KFUHA&linkCode=as2&tag=fashionattack-20&linkId=b0e2ac01a23aea8e408f9c8c83aa0aa7" />,
+    display: (
+      <AmazonProductList 
+        title="Recommended Products for Your Project" 
+        urls={msg["response"]} 
+      />
+    ),
   };
-
 }
 
 const nanoid = () => Math.random().toString(36).slice(2);

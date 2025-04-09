@@ -14,6 +14,12 @@ interface AmazonProductProps {
   url: string;
   description?: string;
 }
+
+interface AmazonProductsProps {
+  urls: string[];
+  title?: string;
+}
+
 function extractAmazonProductInfo(url: string): { countryCode: string; productCode: string } {
   // Create a URL object to parse the provided URL string.
   const parsedUrl = new URL(url);
@@ -26,6 +32,7 @@ function extractAmazonProductInfo(url: string): { countryCode: string; productCo
   const productCode = parsedUrl.pathname.split('/')[3];
   return { countryCode, productCode };
 }
+
 async function fetch_product_info(productCode: string, countryCode: string) {
   console.log(productCode, countryCode);
   const fetcing_url = `https://real-time-amazon-data.p.rapidapi.com/product-details?asin=${productCode}&country=${countryCode}`
@@ -64,6 +71,7 @@ async function fetch_product_info(productCode: string, countryCode: string) {
     throw error;
   }
 }
+
 export function AmazonProduct({
   url
 }: AmazonProductProps) {
@@ -168,6 +176,29 @@ export function AmazonProduct({
   );
 }
 
+export function AmazonProducts({ urls, title }: AmazonProductsProps) {
+  const { theme } = useTheme();
+  
+  return (
+    <View style={styles.productsContainer}>
+      {title && (
+        <Text 
+          style={[
+            styles.sectionTitle,
+            { color: theme === 'dark' ? '#FFFFFF' : '#000000' }
+          ]}
+        >
+          {title}
+        </Text>
+      )}
+      
+      {urls.map((url, index) => (
+        <AmazonProduct key={index} url={url} />
+      ))}
+    </View>
+  );
+}
+
 const styles = StyleSheet.create({
   container: {
     borderRadius: 12,
@@ -225,5 +256,15 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 12,
     fontWeight: '700',
+  },
+  productsContainer: {
+    gap: 16,
+    marginVertical: 16,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    marginBottom: 12,
+    paddingHorizontal: 16,
   },
 }); 
