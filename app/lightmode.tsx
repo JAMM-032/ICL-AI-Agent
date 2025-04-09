@@ -75,5 +75,5 @@ const getStyles = (theme) =>
         color: theme === 'dark' ? 'white' : 'black',
       },
     });
-
 export default Switch;
+

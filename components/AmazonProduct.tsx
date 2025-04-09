@@ -3,9 +3,9 @@
 import React, { useEffect, useState } from 'react';
 import { Image, Linking, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useTheme } from "./ui/ThemeProvider";
-import dotenv from 'dotenv';
-dotenv.config();
-const X_RAPIDAPI_KEY = process.env.X_RAPIDAPI_KEY;
+
+const X_RAPIDAPI_KEY = "1f45a600e9msh60fc0bffaf620fep14dc45jsn57144d9a4bf7";
+
 interface AmazonProductProps {
   title: string;
   image: string;
@@ -17,7 +17,6 @@ interface AmazonProductProps {
 function extractAmazonProductInfo(url: string): { countryCode: string; productCode: string } {
   // Create a URL object to parse the provided URL string.
   const parsedUrl = new URL(url);
-
   const hostnameParts = parsedUrl.hostname.split('.');
   let countryCode = hostnameParts[hostnameParts.length - 1];
   if (countryCode === 'com') {
