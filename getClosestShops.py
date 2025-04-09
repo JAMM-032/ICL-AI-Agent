@@ -53,7 +53,7 @@ async def handle_startup(ctx: Context):
 
 @agent.on_message(POIResponse)
 async def handle_response(ctx: Context, sender: str, msg: POIResponse):
-    ctx.logger.info(f"Received {len(msg.data)} pois from: {sender}")
+    ctx.logger.info(f"Received {len(msg.data)} points of interest from: {sender}")
 
 
 if __name__ == "__main__":

@@ -13,6 +13,7 @@ import json
 from datetime import datetime
 from uuid import uuid4
 import requests
+from SentimentalAnalysis import get_aspect_and_score
 from uagents_core.contrib.protocols.chat import (
     ChatMessage,
     TextContent,
@@ -118,10 +119,20 @@ async def get_repairs(request: str):
         query_string="coffee shop",
     )
     answer = await send_sync_message(destination=GMAPS_AGENT_ADDRESS, message=request)
-    return {"response": answer}
+    # get the aspect and score from the answer
+    aspects = get_aspect_and_score(answer)
+    return {"response": aspects}
 
 @app.get("/api/get-tools-ASI")
 async def get_tools(request: str):
+    request = get_tools_from_youtube(request).content
+    answer = await send_sync_message(destination=YOUTUBE_RAG_AGENT_ADDRESS, message=request)
+    # using ASI to get the tools
+    print(answer)
+    return {"response": answer}
+
+@app.get("/api/get-recommendations")
+async def get_recommendations(request: str):
     request = get_tools_from_youtube(request).content
     answer = await send_sync_message(destination=YOUTUBE_RAG_AGENT_ADDRESS, message=request)
     print(answer)
