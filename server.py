@@ -123,6 +123,19 @@ async def get_repairs(request: str):
     aspects = get_aspect_and_score(answer)
     return {"response": aspects}
 
+@app.get("/api/get-repairs/recommendations")
+async def get_repairs(request: str, aspect: str):
+    request = POIAreaRequest(
+        loc_search=Coordinates(latitude=51.53160339999999, longitude=-0.1235978),
+        radius_in_m=1500,
+        query_string="coffee shop",
+    )
+    answer = await send_sync_message(destination=GMAPS_AGENT_ADDRESS, message=request)
+    # get the aspect and score from the answer
+    aspects = get_aspect_and_score(answer, aspect)
+    
+    return {"response": aspects}
+
 @app.get("/api/get-tools-ASI")
 async def get_tools(request: str):
     request = get_tools_from_youtube(request).content

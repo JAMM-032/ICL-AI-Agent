@@ -27,32 +27,6 @@ for place in data['results']:
 # in a dictionary
 location_to_review = {}
 
-location_score = []
-location_aspect = []
-    
-nlp = spacy.load("en_core_web_sm")
-model_name = "yangheng/deberta-v3-base-absa-v1.1"
-tokenizer = AutoTokenizer.from_pretrained(model_name, use_fast=False)
-model = AutoModelForSequenceClassification.from_pretrained(model_name)
-keys = list(location_to_review.keys())
-for key in keys:
-    texts = location_to_review[key]
-    # Analyze sentiment for each aspect
-    for text in texts:
-
-        # Process the text with spaCy
-        doc = nlp(text)
-
-        # Extract noun phrases as aspect candidates
-        aspects = [chunk.text for chunk in doc.noun_chunks]
-        
-        print(aspects)
-        for aspect in aspects:
-            inputs = tokenizer(text, aspect, return_tensors="pt")
-            outputs = model(**inputs)
-            scores = F.softmax(outputs.logits, dim=1)
-            sentiment = torch.argmax(scores).item()
-            sentiment_label = model.config.id2label[sentiment]
 
 # Load the spaCy model
 def get_aspect_and_score(placeId_list):
@@ -66,9 +40,7 @@ def get_aspect_and_score(placeId_list):
         List of unique aspects (features)
     """
     location_to_review = {}
-    print("placeId_list", placeId_list)
     placeId_list = json.loads(placeId_list)
-    print("placeId_list", placeId_list["data"])
     placeId_list = placeId_list["data"]
     for placeId in placeId_list:
         reviews = []
@@ -107,3 +79,52 @@ def get_aspect_and_score(placeId_list):
                     return str(list(unique_aspects)[:5])    
         
     # Convert set to list and return the first 5 (or fewer if not enough found)
+def get_aspect_and_score(placeId_list, aspect):
+    location_to_review = {}
+    placeId_list = json.loads(placeId_list)
+    placeId_list = placeId_list["data"]
+    for placeId in placeId_list:
+        reviews = []
+        print("placeId", placeId)
+        url = f'https://maps.googleapis.com/maps/api/place/details/json?place_id={placeId}&key={os.getenv("GOOGLE_MAPS_API_KEY")}'
+        response = requests.get(url)
+        data = json.loads(response.text)
+        print("data", data)
+        if "reviews" in data["result"]: 
+            for review in data["result"]["reviews"]:
+                reviews.append(review['text'])
+        else:
+            print(f"No reviews found for this place. Place data: {data.get('result', {}).get('name', 'Unknown place')}")
+        location_to_review[placeId] = reviews
+    location_score = []
+    location = []
+    nlp = spacy.load("en_core_web_sm")
+    model_name = "yangheng/deberta-v3-base-absa-v1.1"
+    tokenizer = AutoTokenizer.from_pretrained(model_name, use_fast=False)
+    model = AutoModelForSequenceClassification.from_pretrained(model_name)
+    keys = list(location_to_review.keys())
+    total_score = 0
+    for key in keys:
+        texts = location_to_review[key]
+        # Analyze sentiment for each aspect
+        for text in texts:
+            # Process the text with spaCy
+            doc = nlp(text)
+            # Extract noun phrases as aspect candidates
+            inputs = tokenizer(text, aspect, return_tensors="pt")
+            outputs = model(**inputs)
+            scores = F.softmax(outputs.logits, dim=1)
+            sentiment = torch.argmax(scores).item()
+            sentiment_label = model.config.id2label[sentiment]
+            total_score += sentiment
+        total_score = int((total_score / len(keys)) * 100)
+        location_score.append((key, total_score))
+        total_score = 0
+        # Now sort in descending order by the score
+    location_score.sort(key=lambda x: x[1], reverse=True)
+    
+    # location_scores is now a list of tuples like [("efgh", 1.4), ("abcd", 0.5), ... ] in descending order
+    for place_id, score in location_score:
+        location.append(place_id)
+    return location
+    
