@@ -9,24 +9,18 @@ import dotenv
 # Load environment variables from .env file
 dotenv.load_dotenv()
 
-# get locations from google maps via latitude and longitude
-latitude = 51.5304
-longitude = -0.1232     
-placeId_list = []
-url = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=51.53160339999999,-0.1235978&radius=1500&type=DIY&keyword=repairer&key=AIzaSyBlo_CbZwwhVEtT8V5x0zW6JCmItgUWGAA'
-response = requests.get(url)
-data = json.loads(response.text)
-for place in data['results']:
-    placeId = place['place_id']
-    placeId_list.append(placeId)
 
 # get reviews from google maps
 # storing the location id and the reviews as a key-pair
 # in a dictionary
 # storing the location id and the reviews as a key-pair
-# in a dictionary
-location_to_review = {}
-
+def get_Coordinates(request):
+    url = f'https://maps.googleapis.com/maps/api/geocode/json?address={request}&key=AIzaSyBlo_CbZwwhVEtT8V5x0zW6JCmItgUWGAA'
+    response = requests.get(url)
+    data = json.loads(response.text)
+    location = data['results'][0]['geometry']['location']
+    print("location", location)
+    return location
 
 # Load the spaCy model
 def get_aspect_and_score(placeId_list):

@@ -13,7 +13,7 @@ import json
 from datetime import datetime
 from uuid import uuid4
 import requests
-from SentimentalAnalysis import get_aspect_and_score
+from SentimentalAnalysis import get_aspect_and_score, get_Coordinates
 from uagents_core.contrib.protocols.chat import (
     ChatMessage,
     TextContent,
@@ -85,19 +85,6 @@ async def question_answering(
     else:
         return {"response": "false"}
 
-@app.get("/api/close-agent")
-async def question_answering(
-    url: str
-):
-    request = RAGRequest(url=url, user_query=["Does the video relate to DIY? If yes return true else return false", "Are there any amazon links provided for building? If yes return the list of links as an array of links else return false"])
-    answer = await send_sync_message(destination=YOUTUBE_RAG_AGENT_ADDRESS, message=request)
-    response = json.loads(answer[0])["response"]
-    print(response)
-    if response == "Yes":
-        return {"response": answer[1]}
-    else:
-        return {"response": "false"}
-
 @app.get("/api/get-location")
 async def get_location(request: str):
     initial_message = GeolocationRequest(address=request)
@@ -113,10 +100,12 @@ async def get_location(request: str):
 
 @app.get("/api/get-repairs")
 async def get_repairs(request: str):
+    # get the location from the request
+    location = get_Coordinates(request)
     request = POIAreaRequest(
-        loc_search=Coordinates(latitude=51.53160339999999, longitude=-0.1235978),
+        loc_search=Coordinates(latitude=location["lat"], longitude=location["lng"]),
         radius_in_m=1500,
-        query_string="coffee shop",
+        query_string="repair shop",
     )
     answer = await send_sync_message(destination=GMAPS_AGENT_ADDRESS, message=request)
     # get the aspect and score from the answer
@@ -125,15 +114,16 @@ async def get_repairs(request: str):
 
 @app.get("/api/get-repairs/recommendations")
 async def get_repairs(request: str, aspect: str):
+    # get the location from the request
+    location = get_Coordinates(request)
     request = POIAreaRequest(
-        loc_search=Coordinates(latitude=51.53160339999999, longitude=-0.1235978),
+        loc_search=Coordinates(latitude=location["lat"], longitude=location["lng"]),
         radius_in_m=1500,
-        query_string="coffee shop",
+        query_string="repair shop",
     )
     answer = await send_sync_message(destination=GMAPS_AGENT_ADDRESS, message=request)
     # get the aspect and score from the answer
     aspects = get_aspect_and_score(answer, aspect)
-    
     return {"response": aspects}
 
 @app.get("/api/get-tools-ASI")
@@ -151,21 +141,3 @@ async def get_recommendations(request: str):
     print(answer)
     return {"response": answer}
 
-# GET endpoint example
-@agent.on_rest_get("/rest/get", Response)
-async def handle_get(ctx: Context) -> Dict[str, Any]:
-    ctx.logger.info("Received GET request")
-    return {
-        "timestamp": int(time.time()),
-        "text": "Hello from the GET handler!",
-        "agent_address": ctx.agent.address,
-    }
-# POST endpoint example
-@agent.on_rest_post("/rest/post", Request, Response)
-async def handle_post(ctx: Context, req: Request) -> Response:
-    ctx.logger.info("Received POST request")
-    return Response(
-        text=f"Received: {req.text}",
-        agent_address=ctx.agent.address,
-        timestamp=int(time.time()),
-    )
