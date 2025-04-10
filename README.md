@@ -1,4 +1,4 @@
-#👷 DIY AI AGENT#
+#👷 DIY AI AGENT
 Offering a seamless experience on your DIY journey
 
 🚨 The Problem
