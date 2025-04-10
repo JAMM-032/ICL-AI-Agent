@@ -13,6 +13,14 @@ interface AmazonProductListProps {
 export function AmazonProductList({ title, urls }: AmazonProductListProps) {
   const { theme } = useTheme();
   
+  if (!urls || urls.length === 0) {
+    return (
+      <View style={styles.emptyContainer}>
+        <Text>No products found.</Text>
+      </View>
+    );
+  }
+  
   return (
     <View style={styles.container}>
       {title && (
@@ -57,5 +65,10 @@ const styles = StyleSheet.create({
   productContainer: {
     width: 280,
     marginHorizontal: 8,
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 }); 

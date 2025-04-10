@@ -20,9 +20,6 @@ export function SimpleCard({ title, onPress }: SimpleCardProps) {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     }
     
-    if (onPress) {
-      onPress();
-    }
   };
   
   return (
@@ -64,5 +61,6 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 16,
     fontWeight: '500',
+    textAlign: 'center',
   },
 });

@@ -64,7 +64,8 @@ async function fetch_product_info(productCode: string, countryCode: string) {
     }
     const rating = data.data.product_star_rating;
     const currency = data.data.currency;
-    return {image, title, price, rating, currency};
+    const description = data.data.product_description;
+    return {image, title, price, rating, currency, description};
   } catch (error) {
     // Log the error and rethrow for further handling if needed.
     console.error("Fetch error:", error);
@@ -81,15 +82,17 @@ export function AmazonProduct({
   const [price, setPrice] = useState('');
   const [rating, setRating] = useState('');
   const [currency, setCurrency] = useState('');
+  const [description, setDescription] = useState('');
   const { countryCode, productCode } = extractAmazonProductInfo(url);
   useEffect( () => {
     const fetch_product_info_async = async () => {
-      const {image, title, price, rating, currency} = await fetch_product_info(productCode, countryCode);
+      const {image, title, price, rating, currency, description} = await fetch_product_info(productCode, countryCode);
       setImage(image);
       setTitle(title);
       setPrice(price);
       setRating(rating);
       setCurrency(currency);
+      setDescription(description);
     }
     fetch_product_info_async();
   }, []);
@@ -158,7 +161,7 @@ export function AmazonProduct({
               ]}
               numberOfLines={2}
             >
-              hey
+              {description}
             </Text>
           
         </View>
