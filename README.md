@@ -1,23 +1,57 @@
-👷DIY AI AGENT: offering seamless experience on your DIY journey
+#👷 DIY AI AGENT#
+Offering a seamless experience on your DIY journey
 
-🚨The problem:
+🚨 The Problem
+Building or repairing interiors can feel overwhelming for many beginners. People often struggle due to:
 
-The problem is that people find it really hard to build or repair interror due to the lack of familiality at the start. And the book about DIY does not provide sufficient information on what you need to buy. This is because the product is deprecated, the product is so far away from the home country etc.
+Limited Familiarity: Lack of starting guidance makes it hard to know what to buy.
 
-⭐️The Solution:
+Outdated Information: Traditional DIY books often suggest deprecated products.
 
-We have built an AI agent that will help DIY starter and those who want to repair their interior by...
+Geographical Barriers: Recommended products may be unavailable or too far away.
 
-Giving chatting interface to user and teach how to build something like a chair from scratch.
+⭐️ Our Solution
+Our DIY AI Agent is here to revolutionize your DIY experience by:
 
-Analyzing Youtube video from Youtube link and will show the list of tools you need to have before user build it.
+Interactive Chat Interface:
 
-Giving Personalised recommendation system by analysing and extract aspects that user may care the most from reviews from Google Map.
+Chat directly with the agent to learn how to build or repair projects—like constructing a chair from scratch.
 
-👀Key Feature:
+Video Analysis & Tool Checklist:
 
-Built a uAgent that will retrieve the Amazon links from a single Youtube link if the Youtube video relates to the DIY project. Using storage on uAgent improved the performance as previous query will be stored on a dictionary. https://agentverse.ai/agents/details/agent1qdaarjf9fent8y0fmnd47lk66w9nuyx7j6042mlpyk6zsehq7caz2h8cwu3/stats
-Implemented an NLP system that will identify whether the user request relates to the DIY project.
-Used ASI-1 mini model to extract the location that user has mentioned and sent the request to uAgent that has limitless access on closest reparing shops from the Google map. https://agentverse.ai/agents/details/agent1qwjxllsh6k6f9q4t7qllw85ad82qunzac9yncu33ynr9tmll5d9cgs6e7xq/profile
-Used ABSA(Aspect Based Sentimental Analysis) to calculate the sentimental score on each google location. And compare these values, then generated the recommendation system. (Only on Backend and not on video😭)
-Used an external uAgent from Fetch.ai to query the coordinate of the location and passed that to the Agent I explained on 3rd point. https://agentverse.ai/agents/details/agent1qgtaj7emyccjrhce8xh0dmxltu6akurkddhttr58krafq55vpf9vjwtcdqn/profile
+Provide a YouTube link of the DIY project.
+
+The agent analyzes the video and generates a comprehensive list of tools and materials needed.
+
+Personalized Recommendations:
+
+Analyze reviews and extract key aspects from Google Maps data.
+
+Offer tailored product recommendations based on what matters most to you.
+
+👀 Key Features
+Amazon Link Retrieval:
+The agent scans a single YouTube link related to your DIY project and retrieves relevant Amazon links.
+Performance is boosted by caching previous queries using uAgent storage.
+View Agent Stats
+
+NLP-Powered Request Filtering:
+Our natural language processing system accurately identifies and validates DIY project requests.
+
+Local Repair Shop Finder:
+Using the ASI-1 mini model, the agent extracts your mentioned location and forwards the request to find the closest repair shops on Google Maps.
+View Location Agent
+
+Aspect-Based Sentiment Analysis (ABSA):
+Our ABSA system calculates sentiment scores on each Google location review and generates a recommendation ranking based on:
+
+Quality of repair shops
+
+User review insights
+(Note: This feature is implemented on the backend)
+
+Enhanced Geolocation via Fetch.ai:
+An external uAgent from Fetch.ai queries your coordinates, enabling the main agent to pinpoint the best nearby repair options.
+View Fetch.ai Agent
+
+With our DIY AI Agent, you no longer have to navigate endless research and outdated resources. Whether you're a DIY starter or looking to repair your home's interior, our agent guides you every step of the way—making DIY projects simpler, smarter, and more enjoyable.
