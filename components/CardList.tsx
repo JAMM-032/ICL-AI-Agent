@@ -1,14 +1,16 @@
 "use client";
 
 import { useActions } from 'ai/rsc';
-import React from 'react';
+import React, { useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { AI } from './ai-context';
 import { SimpleCard } from './SimpleCard';
 import { useTheme } from './ui/ThemeProvider';
 
 interface CardItem {
+  id?: string;
   title: string;
+  metadata?: any; // Can store any additional data
   // Add any other properties your Card component accepts
 }
 
@@ -23,13 +25,24 @@ export function CardList({ title, items, horizontal = true, onCardPress }: CardL
   const { theme } = useTheme();
   const isDark = theme === 'dark';
   const { onSubmit } = useActions(AI);
+  const [selectedCardIndex, setSelectedCardIndex] = useState<number | null>(null);
   
-  const handleCardPress = (cardTitle: string) => {
+  const handleCardPress = (item: CardItem) => {
+    console.log(`Card pressed:`, item);
+    
     if (onCardPress) {
-      onCardPress(cardTitle);
+      onCardPress(item.title);
     } else {
-      // Default behavior: submit the card title as a message
-      onSubmit(cardTitle);
+      // Send structured data as JSON
+      const cardData = {
+        action: 'card_press',
+        id: item.id,
+        title: item.title,
+        metadata: item.metadata
+      };
+      
+      // Convert to string for submission
+      onSubmit(JSON.stringify(cardData));
     }
   };
   
@@ -66,7 +79,7 @@ export function CardList({ title, items, horizontal = true, onCardPress }: CardL
             <View key={index} style={styles.cardContainer}>
               <SimpleCard 
                 title={item.title}
-                onPress={() => handleCardPress(item.title)}
+                onPress={() => handleCardPress(item)}
               />
             </View>
           ))}
@@ -77,7 +90,7 @@ export function CardList({ title, items, horizontal = true, onCardPress }: CardL
             <View key={index} style={styles.gridCardContainer}>
               <SimpleCard 
                 title={item.title}
-                onPress={() => handleCardPress(item.title)}
+                onPress={() => handleCardPress(item)}
               />
             </View>
           ))}
