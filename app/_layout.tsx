@@ -48,9 +48,13 @@ function AppContent() {
                     </Link>
                   </View>
                   <View style={styles.headerCenter}>
-                    <Text style={[styles.titleText, { color: theme === 'dark' ? '#FFFFFF' : '#000000' }]}>
-                      DIY AI
-                    </Text>
+                    <Link href="/" asChild dismissTo>
+                      <TouchableBounce sensory>
+                          <Text style={[styles.titleText, { color: theme === 'dark' ? '#FFFFFF' : '#000000' }]}>
+                            DIY AI
+                          </Text>
+                      </TouchableBounce>
+                    </Link>
                   </View>
                   <View style={styles.headerRight}>
                     <LightMode/>
@@ -130,6 +134,8 @@ const styles = StyleSheet.create({
   headerLeft: {
     flex: 1,
     alignItems: 'flex-start',
+    display: 'flex',
+    flexDirection: 'row',
   },
   headerCenter: {
     flex: 2,
