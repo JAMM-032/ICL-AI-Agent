@@ -15,7 +15,7 @@ dotenv.load_dotenv()
 # in a dictionary
 # storing the location id and the reviews as a key-pair
 def get_Coordinates(request):
-    url = f'https://maps.googleapis.com/maps/api/geocode/json?address={request}&key=key={os.getenv("GOOGLE_MAPS_API_KEY")}'
+    url = f'https://maps.googleapis.com/maps/api/geocode/json?address={request}&key={os.getenv("GOOGLE_MAPS_API_KEY")}'
     response = requests.get(url)
     data = json.loads(response.text)
     location = data['results'][0]['geometry']['location']
