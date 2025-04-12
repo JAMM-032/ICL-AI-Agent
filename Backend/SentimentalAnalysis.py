@@ -39,7 +39,6 @@ def get_aspect_and_score(placeId_list):
     try:
         placeId_list = json.loads(placeId_list)
         placeId_list = placeId_list.get("data", [])
-        print("placeId_list", placeId_list)
         
         for placeId in placeId_list:
             reviews = []
@@ -47,7 +46,6 @@ def get_aspect_and_score(placeId_list):
             url = f'https://maps.googleapis.com/maps/api/place/details/json?place_id={placeId}&key={os.getenv("GOOGLE_MAPS_API_KEY")}'
             response = requests.get(url)
             data = json.loads(response.text)
-            print("data", data)
             
             # Check if result exists and has reviews
             if "result" in data and "reviews" in data["result"]: 
@@ -64,12 +62,39 @@ def get_aspect_and_score(placeId_list):
         for key in keys:
             texts = location_to_review[key]
             for text in texts:
-                doc = nlp(text)
-                # Extract noun phrases as aspect candidates
-                aspects = [chunk.text.lower() for chunk in doc.noun_chunks if len(chunk.text) > 2]
-                # Filter out common, non-informative aspects
+                url = "https://api.asi1.ai/v1/chat/completions"
+                headers = {
+                    "Content-Type": "application/json",
+                    "Authorization": "Bearer sk_ac30c25268c1452fa555f070e4e5e5b2aac78c99b9c24e23afe7ff154cd66e8c"
+                }
+                
+                body ={
+                "model": "asi1-mini",
+                "messages": [
+                    {
+                    "role": "user",
+                    "content": """You are a helpful assistant. You will determine the list aspect of the review can work as a factor of the score of the place. 
+                        then only return the list of aspects as an array. here is the review: """ + text
+                    }
+                ],
+                "temperature": 0.7,
+                "stream": False,
+                "max_tokens": 8000
+                }
+
+                # Send a GET request
+                response = requests.post(url, headers=headers, json=body)
+
+                # Raise an exception for HTTP errors (status codes 4xx or 5xx)
+                response.raise_for_status()
+
+                # Parse the JSON response into a Python dictionary
+                data = response.json()
+                list_aspects = data.get("choices")[0].get("message").get("content")
+                list_aspects = json.loads(list_aspects)
+                print("data", data.get("choices")[0].get("message").get("content"))
                 filtered_aspects = []
-                for aspect in aspects:
+                for aspect in list_aspects:
                     # Skip very common words that aren't useful features
                     if aspect not in ["i", "me", "my", "mine", "you", "your", "he", "she", "it", "they", "them", 
                                     "this", "that", "these", "those", "the", "a", "an"]:
