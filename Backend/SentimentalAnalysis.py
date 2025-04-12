@@ -65,7 +65,7 @@ def get_aspect_and_score(placeId_list):
                 url = "https://api.asi1.ai/v1/chat/completions"
                 headers = {
                     "Content-Type": "application/json",
-                    "Authorization": f'Bearer key={os.getenv("ASI_API_KEY")}'
+                    "Authorization": "Bearer " + os.getenv("ASI_API_KEY")
                 }
                 
                 body ={
