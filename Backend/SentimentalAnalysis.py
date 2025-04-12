@@ -15,7 +15,7 @@ dotenv.load_dotenv()
 # in a dictionary
 # storing the location id and the reviews as a key-pair
 def get_Coordinates(request):
-    url = f'https://maps.googleapis.com/maps/api/geocode/json?address={request}&key=AIzaSyBlo_CbZwwhVEtT8V5x0zW6JCmItgUWGAA'
+    url = f'https://maps.googleapis.com/maps/api/geocode/json?address={request}&key=key={os.getenv("GOOGLE_MAPS_API_KEY")}'
     response = requests.get(url)
     data = json.loads(response.text)
     location = data['results'][0]['geometry']['location']
@@ -65,7 +65,7 @@ def get_aspect_and_score(placeId_list):
                 url = "https://api.asi1.ai/v1/chat/completions"
                 headers = {
                     "Content-Type": "application/json",
-                    "Authorization": "Bearer sk_ac30c25268c1452fa555f070e4e5e5b2aac78c99b9c24e23afe7ff154cd66e8c"
+                    "Authorization": f'Bearer key={os.getenv("GOOGLE_MAPS_API_KEY")}'
                 }
                 
                 body ={
